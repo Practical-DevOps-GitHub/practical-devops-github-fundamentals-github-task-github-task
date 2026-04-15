@@ -1,0 +1,17 @@
+name: Discord Notify
+
+on:
+  pull_request:
+    types: [opened]
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord message
+        run: |
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
+          -H "Content-Type: application/json" \
+          -d '{"content":"Event triggered: ${{ github.event_name }}"}'
