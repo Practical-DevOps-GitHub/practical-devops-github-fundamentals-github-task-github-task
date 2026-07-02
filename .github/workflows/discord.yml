@@ -1,0 +1,38 @@
+name: Discord Notification
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Embed
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{
+            \"embeds\": [{
+              \"title\": \"🚀 New Pull Request\",
+              \"description\": \"**${{ github.event.pull_request.title }}**\",
+              \"url\": \"${{ github.event.pull_request.html_url }}\",
+              \"color\": 3066993,
+              \"fields\": [
+                {
+                  \"name\": \"Repository\",
+                  \"value\": \"${{ github.repository }}\",
+                  \"inline\": true
+                },
+                {
+                  \"name\": \"Author\",
+                  \"value\": \"${{ github.actor }}\",
+                  \"inline\": true
+                }
+              ]
+            }]
+          }" \
+          $DISCORD_WEBHOOK
